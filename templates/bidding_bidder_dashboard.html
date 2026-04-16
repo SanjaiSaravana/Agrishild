@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidder Dashboard | AgriShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <style>
+        .dashboard-container {
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        .auction-section {
+            margin-bottom: 50px;
+        }
+
+        .auction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .auction-card {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .grade-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grade-A {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .grade-B {
+            border-color: #f1c40f;
+            color: #f1c40f;
+        }
+
+        .grade-C {
+            border-color: #e67e22;
+            color: #e67e22;
+        }
+
+        .price-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .price-box {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .countdown-timer {
+            padding: 10px;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .bid-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .bid-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modern-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-family: inherit;
+            flex: 1;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .quick-bid-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .quick-bid-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 210, 255, 0.05);
+        }
+
+        .meet-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .past-auctions {
+            margin-top: 60px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/smart-bidding" class="nav-link">Bidding Home</a>
+                <a href="/" class="nav-link">AgriShield Home</a>
+            </div>
+            <div class="nav-right">
+                <span style="color: #888; font-size: 0.85rem; margin-right: 10px;">Bidder:</span>
+                <span style="color: #fff; font-weight: 700; margin-right: 20px;">{{ current_user.username }}</span>
+                <a href="/bidding/logout" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom: 30px;">
+            {% for category, message in messages %}
+            <div class="pill-badge"
+                style="display: block; width: 100%; border-color: {% if category == 'error' %}#ff4d4d{% else %}var(--primary){% endif %}; background: rgba(0,0,0,0.3); padding: 15px; text-align: left; margin-bottom: 10px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <header class="welcome-section" style="margin-bottom: 50px;">
+            <div class="pill-badge">BIDDER PORTAL</div>
+            <h1>Live <span class="gradient-text">Auction Market</span></h1>
+            <p>Access high-quality harvests directly from farmers. Fast, transparent, and AI-verified.</p>
+        </header>
+
+        <section class="auction-section">
+            <h2 class="section-title" style="margin-bottom: 30px; font-size: 1.8rem;">Active <span
+                    class="gradient-text">Listings</span></h2>
+
+            {% if active_crops %}
+            <div class="auction-grid">
+                {% for crop in active_crops %}
+                <div class="card auction-card border-blue" style="border-color: rgba(0, 210, 255, 0.1);">
+                    <div class="grade-badge grade-{{ crop.ai_grade }}">Grade {{ crop.ai_grade }}</div>
+
+                    <div>
+                        <h3 style="font-size: 1.4rem; margin: 0;">{{ crop.name }}</h3>
+                        <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">
+                            👨‍🌾 Farmer: <span style="color: #fff;">{{ crop.farmer.username }}</span> •
+                            📦 <span style="color: var(--accent);">{{ crop.quantity }}</span>
+                        </p>
+                    </div>
+
+                    {% if crop.description %}
+                    <p style="font-size: 0.9rem; color: #777; font-style: italic;">"{{ crop.description }}"</p>
+                    {% endif %}
+
+                    <div class="price-stats">
+                        <div class="price-box">
+                            <div class="price-label">BASE PRICE</div>
+                            <div class="price-value">₹{{ crop.base_price }}</div>
+                        </div>
+                        <div class="price-box"
+                            style="border-color: var(--accent); background: rgba(0, 210, 255, 0.02);">
+                            <div class="price-label" style="color: var(--accent);">HIGHEST BID</div>
+                            <div class="price-value" style="color: var(--text);">₹{{ "%.2f"|format(crop.highest_bid())
+                                }}</div>
+                        </div>
+                    </div>
+
+                    <div class="countdown-timer" data-end="{{ crop.end_time }}">
+                        <span>⚡</span>
+                        <span class="timer">Calculating...</span>
+                    </div>
+
+                    <form action="/bidding/bid/{{ crop.id }}" method="POST" class="bid-form">
+                        <div class="bid-input-group">
+                            <div class="bid-input-wrapper">
+                                <input type="number" name="amount" class="modern-input" placeholder="Enter Amount ₹"
+                                    step="0.01" required>
+                                <button type="submit" class="btn-primary"
+                                    style="padding: 10px 20px; border-radius: 10px;">Place Bid</button>
+                            </div>
+                        </div>
+                        <button type="submit" name="amount" value="auto_5" class="quick-bid-btn">
+                            🏃 Quick Bid (Hold +₹5)
+                        </button>
+                    </form>
+
+                    {% if crop.meet_link %}
+                    <a href="{{ crop.meet_link }}" target="_blank" class="meet-badge">
+                        📹 Request Virtual Inspection
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card" style="text-align: center; padding: 60px;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📉</div>
+                <h3>No Active Auctions</h3>
+                <p style="color: #888;">New harvests are listed daily. Check back soon!</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="past-auctions">
+            <h2 style="font-size: 1.5rem; margin-bottom: 25px;">History & <span class="gradient-text">Past Deals</span>
+            </h2>
+
+            {% if expired_crops %}
+            <div class="auction-grid">
+                {% for crop in expired_crops %}
+                <div class="card" style="padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h4 style="margin: 0;">{{ crop.name }}</h4>
+                            <p style="font-size: 0.8rem; color: #555;">{{ crop.quantity }} • Farmer: {{
+                                crop.farmer.username }}</p>
+                        </div>
+                        <div class="grade-badge grade-{{ crop.ai_grade }}"
+                            style="position: static; font-size: 0.65rem; padding: 3px 8px;">Grade {{ crop.ai_grade }}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; font-size: 0.9rem;">
+                        {% if crop.get_winner() %}
+                        <p style="color: var(--primary); font-weight: 700;">🤝 Sold to {{ crop.get_winner() }}</p>
+                        <p style="color: #888;">Final Price: ₹{{ "%.2f"|format(crop.highest_bid()) }}</p>
+                        {% else %}
+                        <p style="color: #ff4d4d; font-weight: 700;">❌ Passed (No Bids)</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #444;">No history recorded yet.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <script>
+        function updateTimers() {
+            document.querySelectorAll('.countdown-timer').forEach(function (el) {
+                var endTimeStr = el.getAttribute('data-end').replace(' ', 'T');
+                var end = new Date(endTimeStr).getTime();
+                var now = new Date().getTime();
+                var distance = end - now;
+
+                if (distance < 0) {
+                    el.querySelector('.timer').innerHTML = "AUCTION ENDED";
+                    el.style.color = "#888";
+                    el.style.borderColor = "rgba(255,255,255,0.05)";
+                    el.style.background = "transparent";
+                } else {
+                    var hours = Math.floor(distance / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    var timeStr = "";
+                    if (hours > 0) timeStr += hours + "h ";
+                    timeStr += minutes + "m " + seconds + "s";
+
+                    el.querySelector('.timer').innerHTML = "Ends in " + timeStr;
+                }
+            });
+        }
+
+        setInterval(updateTimers, 1000);
+        updateTimers();
+    </script>
+</body>
+
+</html>

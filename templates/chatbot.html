@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriShield AI | Smart Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0F172A;
+            --chat-bg: #1E293B;
+            --primary: #10B981;
+            /* Emerald Green */
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --user-msg-bg: #334155;
+            --bot-msg-bg: #10B981;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background: var(--chat-bg);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        @media (min-width: 600px) {
+            .chat-container {
+                height: 90vh;
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* HEADER */
+        .header {
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #10B981, #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* CHAT AREA */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .bot .avatar {
+            background: rgba(16, 185, 129, 0.2);
+            margin-right: 12px;
+        }
+
+        .user .avatar {
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 12px;
+        }
+
+        .bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .bot .bubble {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+
+        .user .bubble {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        /* INPUT AREA */
+        .input-area {
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-wrapper {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        /* VOICE VISUALIZER OVERLAY */
+        .voice-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .voice-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .waves {
+            display: flex;
+            gap: 6px;
+            height: 60px;
+            align-items: center;
+        }
+
+        .wave {
+            width: 8px;
+            background: var(--primary);
+            border-radius: 4px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: 0.1s;
+            height: 40px;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: 0.2s;
+            height: 50px;
+        }
+
+        .wave:nth-child(4) {
+            animation-delay: 0.3s;
+            height: 30px;
+        }
+
+        .wave:nth-child(odd) {
+            animation-duration: 0.8s;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: scaleY(0.5);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scaleY(1.2);
+                opacity: 1;
+                border-color: #fff;
+                box-shadow: 0 0 15px var(--primary);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 56px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .typing-indicator.active {
+            display: block;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+        <header class="header">
+            <div class="header-title">
+                <h1>AgriShield AI</h1>
+                <div class="status-badge" id="location-badge">
+                    <div class="status-dot"></div>
+                    <span>Detecting Location...</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <select id="lang-select"
+                    style="background:rgba(255,255,255,0.1); color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.8rem;">
+                    <option value="auto">Auto (Location)</option>
+                    <option value="en-IN">English (India)</option>
+                    <option value="ta-IN">Tamil (தமிழ்)</option>
+                    <option value="hi-IN">Hindi (हिंदी)</option>
+                    <option value="te-IN">Telugu (తెలుగు)</option>
+                    <option value="kn-IN">Kannada (ಕನ್ನಡ)</option>
+                    <option value="ml-IN">Malayalam (മലയാളം)</option>
+                    <option value="mr-IN">Marathi (मराठी)</option>
+                    <option value="pa-IN">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="bn-IN">Bengali (বাংলা)</option>
+                    <option value="gu-IN">Gujarati (ગુજરાતી)</option>
+                </select>
+                <a href="/" style="color:white; text-decoration:none; font-size:0.9rem; opacity:0.7;">✕</a>
+            </div>
+        </header>
+
+        <div class="chat-messages" id="chat-box">
+            <!-- Messages will appear here -->
+            <div class="message bot">
+                <div class="avatar">🤖</div>
+                <div class="bubble">
+                    Hello! I am your AI assistant. I can speak your regional language based on your location. Ask me
+                    anything about farming!
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing">AI is thinking...</div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <button class="icon-btn" id="mic-btn" title="Hold to Speak">
+                    🎙️
+                </button>
+                <input type="text" id="user-input" placeholder="Type or speak..." autocomplete="off">
+                <button class="icon-btn send-btn" id="send-btn">
+                    ➜
+                </button>
+            </div>
+        </div>
+
+        <!-- Voice Overlay -->
+        <div class="voice-overlay" id="voice-overlay">
+            <div class="waves">
+                <div class="wave" style="height:30px"></div>
+                <div class="wave" style="height:60px"></div>
+                <div class="wave" style="height:40px"></div>
+                <div class="wave" style="height:70px"></div>
+                <div class="wave" style="height:50px"></div>
+            </div>
+            <p style="margin-top:20px; font-weight:500;" id="voice-status">Listening...</p>
+            <button onclick="stopListening()"
+                style="margin-top:20px; background:rgba(255,255,255,0.1); border:none; color:white; padding:8px 20px; border-radius:20px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let userState = "Tamil Nadu"; // Default
+        let userDistrict = "Chennai";
+        let recognition;
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        // --- DOM Elements ---
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const micBtn = document.getElementById('mic-btn');
+        const voiceOverlay = document.getElementById('voice-overlay');
+        const voiceStatus = document.getElementById('voice-status');
+        const locBadge = document.getElementById('location-badge');
+        const typing = document.getElementById('typing');
+        const langSelect = document.getElementById('lang-select');
+
+        // --- Constants ---
+        const stateLangMap = {
+            "Tamil Nadu": "ta-IN",
+            "Punjab": "pa-IN",
+            "Karnataka": "kn-IN",
+            "Kerala": "ml-IN",
+            "Maharashtra": "mr-IN",
+            "Andhra Pradesh": "te-IN",
+            "Telangana": "te-IN",
+            "Gujarat": "gu-IN",
+            "West Bengal": "bn-IN",
+            "Odisha": "or-IN"
+        };
+
+        // --- Initialization ---
+        window.onload = async () => {
+            // Load voices
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+
+            // 1. Get Location
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                userState = ipData.region || "Tamil Nadu";
+                userDistrict = ipData.city || "Chennai";
+                locBadge.innerHTML = `<div class="status-dot"></div><span>${userDistrict}, ${userState}</span>`;
+
+                // Pre-select language based on location if Auto is selected
+                if (langSelect.value === 'auto') {
+                    const detectedLang = stateLangMap[userState] || 'hi-IN';
+                    // Optional: auto-select in dropdown to show user
+                    // langSelect.value = detectedLang; 
+                }
+            } catch (e) {
+                locBadge.innerHTML = `<div class="status-dot"></div><span>Loc: ${userState} (Default)</span>`;
+            }
+
+            // 2. Setup Speech Recognition
+            setupSpeechRecognition();
+        };
+
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+
+        function setupSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = () => {
+                    voiceOverlay.classList.add('active');
+                    voiceStatus.innerText = "Listening...";
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    userInput.value = transcript;
+                    voiceOverlay.classList.remove('active');
+                    handleSend();
+                };
+
+                recognition.onerror = (event) => {
+                    console.error("Speech error", event.error);
+                    voiceStatus.innerText = "Error: " + event.error;
+                    setTimeout(() => {
+                        voiceOverlay.classList.remove('active');
+                    }, 1500);
+                };
+
+                recognition.onend = () => {
+                    // voiceOverlay.classList.remove('active');
+                };
+            } else {
+                micBtn.style.display = 'none';
+                console.warn("Speech Recognition API not supported in this browser.");
+            }
+        }
+
+        function getSelectedLang() {
+            const selected = langSelect.value;
+            if (selected === 'auto') {
+                return stateLangMap[userState] || "hi-IN";
+            }
+            return selected;
+        }
+
+        function stopListening() {
+            if (recognition) recognition.stop();
+            voiceOverlay.classList.remove('active');
+        }
+
+        // --- Interaction ---
+        micBtn.onclick = () => {
+            if (recognition) {
+                const lang = getSelectedLang();
+                recognition.lang = lang;
+                console.log("Starting recognition with language:", lang);
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error("Recognition start error:", e);
+                    recognition.stop();
+                }
+            } else {
+                alert("Your browser does not support voice input. Please try Chrome or Edge on Desktop/Android.");
+            }
+        };
+
+        sendBtn.onclick = handleSend;
+        userInput.onkeydown = (e) => {
+            if (e.key === 'Enter') handleSend();
+        };
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // 1. Add User Message
+            appendMessage(text, 'user');
+            userInput.value = '';
+            typing.classList.add('active');
+
+            // 2. Call API
+            try {
+                // Pass current state based on selected language for better context
+                const effectiveState = Object.keys(stateLangMap).find(key => stateLangMap[key] === getSelectedLang()) || userState;
+
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text, state: effectiveState })
+                });
+                const data = await res.json();
+
+                // 3. Add Bot Response
+                typing.classList.remove('active');
+                appendMessage(data.reply, 'bot');
+
+                // 4. Speak Response
+                speak(data.reply);
+            } catch (err) {
+                typing.classList.remove('active');
+                appendMessage("⚠️ Error connecting to server.", 'bot');
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerHTML = `
+            <div class="avatar">${sender === 'bot' ? '🤖' : '👤'}</div>
+            <div class="bubble">${text}</div>
+        `;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function speak(text) {
+            if (synth.speaking) synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const targetLang = getSelectedLang();
+            utterance.lang = targetLang;
+
+            // Voice Selection Logic
+            let selectedVoice = null;
+
+            // 1. Exact Match via Lang Code
+            selectedVoice = voices.find(v => v.lang === targetLang);
+
+            // 2. Partial Match (e.g. 'ta' match in 'ta-IN')
+            if (!selectedVoice) {
+                const shortLang = targetLang.split('-')[0];
+                selectedVoice = voices.find(v => v.lang.startsWith(shortLang));
+            }
+
+            // 3. Fallback to Google voices (if available) - usually higher quality
+            if (!selectedVoice) {
+                selectedVoice = voices.find(v => v.name.includes("Google") && v.lang.startsWith(targetLang.split('-')[0]));
+            }
+
+            // 4. General Fallback
+            if (!selectedVoice) {
+                selectedVoice = voices.find(v => v.lang.includes('IN')) || voices.find(v => v.lang.includes('en'));
+            }
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+                // console.log("Speaking with voice:", selectedVoice.name);
+            }
+
+            synth.speak(utterance);
+        }
+    </script>
+
+    <script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+    <script>
+        // Require authentication to access this page
+        requireAuth();
+    </script>
+
+</body>
+
+</html>

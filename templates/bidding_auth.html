@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Bidding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <style>
+        .auth-container {
+            max-width: 500px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-buttons button {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab-buttons button.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        form input,
+        form select {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        form button {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/smart-bidding" class="nav-link">Smart Bidding</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="auth-container">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>Welcome Back</h2>
+                <p style="color: #aaa;">Login or create a new account.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div style="margin-bottom: 1rem;">
+                {% for category, message in messages %}
+                <div
+                    style="padding: 0.8rem; background: {% if category == 'error' %}rgba(244, 67, 54, 0.1){% else %}rgba(76, 175, 80, 0.1){% endif %}; border-radius: 8px; margin-bottom: 0.5rem; color: {% if category == 'error' %}#f44336{% else %}#4caf50{% endif %};">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="tab-buttons">
+                <button onclick="showLogin()" id="loginTab" class="active">Login</button>
+                <button onclick="showRegister()" id="regTab">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" method="POST" action="/bidding/auth">
+                <input type="hidden" name="action" value="login">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" method="POST" action="/bidding/auth" style="display: none;">
+                <input type="hidden" name="action" value="register">
+                <input type="text" name="username" placeholder="Choose a Username" required>
+                <input type="password" name="password" placeholder="Choose a Password" required>
+                <label for="role" style="display: block; margin-bottom: 0.5rem; color: #ccc;">I am a:</label>
+                <select name="role" required>
+                    <option value="farmer">Farmer</option>
+                    <option value="bidder">Bidder</option>
+                </select>
+                <button type="submit" class="btn-secondary">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginTab').classList.add('active');
+            document.getElementById('regTab').classList.remove('active');
+        }
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('regTab').classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

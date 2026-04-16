@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+        <div>
+            <h1 style="color: var(--primary); margin: 0;">Policy Certificate</h1>
+            <p style="color: #64748B;">ID: {{ policy.id }} • Issued on June 1, 2026</p>
+        </div>
+        <button class="btn" style="width: auto; background: #eee; color: #333;" onclick="window.print()">📥 Download PDF</button>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 2fr 1fr;">
+        <div class="card">
+            <h3 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">Smart Contract Parameters</h3>
+            
+            <div style="margin: 20px 0;">
+                <h4 style="color: var(--primary);">1. Drought Trigger</h4>
+                <p>If cumulative rainfall from <strong>June 1 to July 31</strong> is less than <strong>100mm</strong>, a payout of <strong>₹10,000</strong> is automatically released.</p>
+                <small style="color: #666;">Data Source: IMD Grid Points (Verified by Chainlink)</small>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4 style="color: var(--primary);">2. Heatwave Trigger</h4>
+                <p>If the maximum daily temperature exceeds <strong>40°C</strong> for <strong>7 consecutive days</strong>, a payout of <strong>₹5,000</strong> is released.</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4 style="color: var(--primary);">3. Crop Health (NDVI)</h4>
+                <p>If the 10m resolution Sentinel-2 NDVI score falls below <strong>30%</strong> during the peak growth phase, a payout of <strong>₹10,000</strong> is released.</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: var(--primary); color: white;">
+            <h3>Coverage Summary</h3>
+            <hr style="opacity: 0.2;">
+            <div style="display: flex; justify-content: space-between; margin: 15px 0;">
+                <span>Sum Insured</span>
+                <strong>₹10,000</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin: 15px 0;">
+                <span>Total Premium</span>
+                <span>₹500</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin: 15px 0;">
+                <span>Govt. Subsidy</span>
+                <span style="color: var(--secondary);">- ₹450</span>
+            </div>
+            <hr style="opacity: 0.2;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold;">
+                <span>Farmer Paid</span>
+                <span>₹50</span>
+            </div>
+            <div style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <small>Contract Address:</small><br>
+                <code style="font-size: 0.7rem; word-break: break-all;">7a9fB2c8D4e3c2E1a9fB2c8D4e3c2E1a9fB2c8D4e3c2E1a</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

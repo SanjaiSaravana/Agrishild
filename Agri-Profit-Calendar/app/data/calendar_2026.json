@@ -1,0 +1,12 @@
+[
+  {"date": "2026-02-01", "tamil": "Thai 19", "event": "Thaipoosam", "status": "red", "crops": ["Flowers", "Milk"]},
+  {"date": "2026-02-02", "tamil": "Thai 20", "event": "", "status": "neutral", "crops": []},
+  {"date": "2026-02-03", "tamil": "Thai 21", "event": "Muhurtham", "status": "red", "crops": ["Jasmine", "Banana"]},
+  {"date": "2026-02-06", "tamil": "Thai 24", "event": "Muhurtham", "status": "red", "crops": ["Flowers", "Turmeric"]},
+  {"date": "2026-02-08", "tamil": "Thai 26", "event": "Muhurtham", "status": "red", "crops": ["Banana Leaf"]},
+  {"date": "2026-02-12", "tamil": "Thai 30", "event": "Bharat Bandh", "status": "yellow", "crops": ["Stockpile Only"]},
+  {"date": "2026-02-13", "tamil": "Masi 1", "event": "Masi Start/Muhurtham", "status": "red", "crops": ["Flowers"]},
+  {"date": "2026-02-15", "tamil": "Masi 3", "event": "MAHA SHIVARATRI", "status": "red", "crops": ["Milk", "Bilva", "Fruits"]},
+  {"date": "2026-02-16", "tamil": "Masi 4", "event": "Muhurtham", "status": "red", "crops": ["Jasmine"]},
+  {"date": "2026-02-20", "tamil": "Masi 8", "event": "Muhurtham", "status": "red", "crops": ["Banana", "Flowers"]}
+]

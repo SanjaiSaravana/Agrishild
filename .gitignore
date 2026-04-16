@@ -1,0 +1,8 @@
+farmguard-insurance/venv/
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+*.db
+.insurance_pool_keypair

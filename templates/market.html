@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MandiDirect | Live Market Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00C853;
+            --bg: #F8FAF9;
+            --surface: #FFFFFF;
+            --text-main: #1A1C1E;
+            --text-sub: #6C727A;
+            --glass: rgba(255, 255, 255, 0.8);
+            --overlay: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .app-header {
+            margin-bottom: 32px;
+            padding-top: 20px;
+        }
+
+        .app-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .location-chip {
+            display: inline-flex;
+            align-items: center;
+            background: var(--surface);
+            padding: 8px 16px;
+            border-radius: 100px;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #E0E4E2;
+        }
+
+        .dot {
+            height: 8px;
+            width: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+
+        .search-area {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .main-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            padding: 10px 5px;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .filter-btn {
+            background: #EDF1F0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: var(--text-main);
+            color: white;
+        }
+
+        .market-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .mandi-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #F0F2F1;
+        }
+
+        /* Price Display Grid */
+        .price-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            background: #F8FAF9;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .price-col {
+            text-align: center;
+        }
+
+        .p-label {
+            font-size: 10px;
+            color: var(--text-sub);
+            font-weight: 700;
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .p-amt {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .p-avg {
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        .variety-badge {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Floating Button */
+        .fab-manual {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--text-main);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 100px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            z-index: 500;
+        }
+
+        /* --- SIDEBAR PANEL --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 320px;
+            height: 100%;
+            background: var(--surface);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
+            padding: 40px 30px;
+            box-sizing: border-box;
+        }
+
+        .sidebar-panel.active {
+            right: 0;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar-panel h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #E0E4E2;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        #loader {
+            text-align: center;
+            padding: 40px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Market Rates</h1>
+            <div class="location-chip">
+                <span class="dot"></span>
+                <span id="location-text">Detecting...</span>
+            </div>
+        </header>
+
+        <div class="search-area">
+            <input type="text" id="searchInput" class="main-input" placeholder="Search vegetables, fruits..."
+                onkeyup="filterData()">
+            <div class="filter-row">
+                <button class="filter-btn active" onclick="setCategory('all', this)">All Items</button>
+                <button class="filter-btn" onclick="setCategory('veg', this)">Vegetables</button>
+                <button class="filter-btn" onclick="setCategory('fruit', this)">Fruits</button>
+            </div>
+        </div>
+
+        <div id="loader" style="display:none;">Updating live rates...</div>
+        <div id="market-list" class="market-list"></div>
+    </div>
+
+    <button class="fab-manual" onclick="toggleSidebar()">Change City</button>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-panel" id="sidebar">
+        <h2>Location</h2>
+        <div class="input-group">
+            <label>Select State</label>
+            <select id="stateSelect" class="sidebar-select" onchange="updateDistricts()">
+                <option value="">-- Choose --</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Chattisgarh">Chattisgarh</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Select District</label>
+            <select id="districtSelect" class="sidebar-select">
+                <option value="">-- Select State First --</option>
+            </select>
+        </div>
+        <button class="action-btn" onclick="applySelection()">Apply Selection</button>
+    </div>
+
+    <script>
+        let rawData = [];
+        let currentCategory = 'all';
+
+        const indiaData = {
+            "Andhra Pradesh": ["Chittor", "Kurnool"],
+            "Assam": ["Kamrup"],
+            "Chandigarh": ["Chandigarh"],
+            "Chattisgarh": ["Narayanpur", "Surajpur"],
+            "Gujarat": ["Amreli", "Rajkot"],
+            "Haryana": ["Ambala", "Gurgaon", "Hissar"],
+            "Himachal Pradesh": ["Kullu"],
+            "Karnataka": ["Bijapur", "Davangere"],
+            "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kollam", "Kottayam", "Malappuram", "Pathanamthitta", "Thirssur", "Thiruvananthapuram"],
+            "Madhya Pradesh": ["Alirajpur", "Badwani", "Betul", "Bhind", "Burhanpur", "Chhatarpur", "Chhindwara", "Dewas", "Dhar", "Dindori", "Hoshangabad", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Narsinghpur", "Raisen", "Rajgarh", "Ratlam", "Sagar", "Satna", "Sehore", "Seoni", "Shajapur", "Shehdol", "Sheopur", "Tikamgarh", "Umariya", "Vidisha"],
+            "Maharashtra": ["Ahmednagar", "Chattrapati Sambhajinagar", "Gadchiroli", "Pune", "Sholapur"],
+            "Odisha": ["Bargarh", "Bolangir", "Cuttack", "Dhenkanal", "Gajapati", "Ganjam", "Keonjhar", "Mayurbhanja", "Puri"],
+            "Punjab": ["Amritsar", "Jalandhar", "Sangrur", "Tarntaran"],
+            "Rajasthan": ["Jalore", "Jodhpur Rural", "Tonk"],
+            "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakuruchi", "Kancheepuram", "Karur", "Krishnagiri", "Madurai", "Nagapattinam", "Nagercoil (Kannyiakumari)", "Namakkal", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "The Nilgiris", "Theni", "Thiruchirappalli", "Thirunelveli", "Thirupathur", "Thirupur", "Thiruvannamalai", "Thiruvarur", "Thiruvellore", "Tuticorin", "Vellore", "Villupuram", "Virudhunagar"],
+            "Telangana": ["Karimnagar", "Mahbubnagar", "Warangal"],
+            "Tripura": ["Gomati", "North Tripura", "Sepahijala"],
+            "Uttar Pradesh": ["Badaun", "Baghpat", "Bijnor", "Bulandshahar", "Fatehpur", "Hathras", "Jalaun (Orai)", "Lucknow", "Unnao"],
+            "Uttarakhand": ["Haridwar", "Udhamsinghnagar"],
+            "West Bengal": ["Hooghly", "Medinipur(W)", "Murshidabad", "Purba Bardhaman"]
+
+        };
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function updateDistricts() {
+            const state = document.getElementById('stateSelect').value;
+            const distDrop = document.getElementById('districtSelect');
+            distDrop.innerHTML = '<option value="">-- Select District --</option>';
+            if (state) {
+                indiaData[state].forEach(d => {
+                    let opt = document.createElement("option");
+                    opt.value = d; opt.text = d; distDrop.appendChild(opt);
+                });
+            }
+        }
+
+        async function applySelection() {
+            const s = document.getElementById('stateSelect').value;
+            const d = document.getElementById('districtSelect').value;
+            if (s && d) {
+                toggleSidebar();
+                fetchMarketData(null, null, s, d);
+            }
+        }
+
+        async function init() {
+            showLoader();
+            // 1. Try IP-based location first (fastest)
+            try {
+                console.log("Attempting IP location...");
+                const ipRes = await fetch('https://ipapi.co/json/');
+                if (!ipRes.ok) throw new Error("IP API failed");
+                const ipData = await ipRes.json();
+                console.log("IP Location found:", ipData);
+                await fetchMarketData(ipData.latitude, ipData.longitude, ipData.region, ipData.city);
+            } catch (e) {
+                console.warn("IP Location failed, trying Browser Geolocation...", e);
+                // 2. Try Browser Geolocation
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        console.log("Browser Geo success");
+                        fetchMarketData(pos.coords.latitude, pos.coords.longitude);
+                    },
+                    (err) => {
+                        console.error("Browser Geo failed:", err);
+                        // 3. Fallback to Default (Chennai, TN)
+                        document.getElementById('location-text').innerText = "Default: Chennai, Tamil Nadu";
+                        fetchMarketData(null, null, "Tamil Nadu", "Chennai");
+                    },
+                    { timeout: 5000 }
+                );
+            }
+        }
+
+        async function fetchMarketData(lat, lon, state = null, district = null) {
+            showLoader();
+            console.log("Fetching market data for:", { lat, lon, state, district });
+            try {
+                const response = await fetch('/api/market/tracker', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat, lon, state, district })
+                });
+
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+                const result = await response.json();
+                console.log("Server response:", result);
+
+                rawData = result.data;
+
+                // Update location text if available
+                if (result.location && result.location.state) {
+                    document.getElementById('location-text').innerText = `${result.location.district || ''}, ${result.location.state}`;
+                } else if (state) {
+                    document.getElementById('location-text').innerText = `${district || ''}, ${state}`;
+                }
+
+                renderCards(rawData);
+            } catch (err) {
+                console.error("Fetch Market Data Error:", err);
+                document.getElementById('market-list').innerHTML = `<p style="text-align:center; color:red;">Connection Failed. Retrying with offline mode...</p>`;
+                // Fallback for demo purposes if backend fails completely
+                setTimeout(() => {
+                    renderCards([
+                        { commodity: "Demo Rice", market: "Backup Market", min_price: 40, modal_price: 45, max_price: 50, variety: "Ponni" },
+                        { commodity: "Demo Tomato", market: "Backup Market", min_price: 20, modal_price: 25, max_price: 30, variety: "Local" }
+                    ]);
+                    document.getElementById('location-text').innerText = "Offline Mode";
+                }, 1000);
+            }
+            hideLoader();
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('market-list');
+            if (!data || data.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:gray; margin-top:40px;">No data found for this area today.</p>`;
+                return;
+            }
+            container.innerHTML = data.map(item => `
+            <div class="mandi-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <span style="font-size:18px; font-weight:700; display:block;">${item.commodity}</span>
+                        <span style="font-size:13px; color:gray;">${item.market} Market</span>
+                    </div>
+                </div>
+                <div class="price-row">
+                    <div class="price-col"><span class="p-label">Min</span><span class="p-amt">₹${item.min_price}</span></div>
+                    <div class="price-col"><span class="p-label">Modal</span><span class="p-amt p-avg">₹${item.modal_price}</span></div>
+                    <div class="price-col"><span class="p-label">Max</span><span class="p-amt">₹${item.max_price}</span></div>
+                </div>
+                <div class="variety-badge">${item.variety}</div>
+            </div>
+        `).join('');
+        }
+
+        function filterData() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const vegList = ['Potato', 'Onion', 'Tomato', 'Brinjal', 'Cabbage', 'Cauliflower', 'Carrot', 'Beans',
+                'Chilli', 'Capsicum', 'Cucumber', 'Radish', 'Beetroot', 'Drumstick', 'Ladies Finger',
+                'Bitter Gourd', 'Bottle Gourd', 'Pumpkin', 'Ginger', 'Garlic', 'Coriander', 'Spinach'];
+            const fruitList = ['Apple', 'Banana', 'Mango', 'Orange', 'Grapes', 'Pomegranate', 'Papaya',
+                'Watermelon', 'Pineapple', 'Guava', 'Sapota', 'Lemon'];
+
+            let filtered = rawData.filter(item => {
+                const name = item.commodity;
+                const matchesSearch = name.toLowerCase().includes(query);
+                if (currentCategory === 'veg') return matchesSearch && vegList.some(v => name.includes(v));
+                if (currentCategory === 'fruit') return matchesSearch && fruitList.some(f => name.includes(f));
+                return matchesSearch;
+            });
+            renderCards(filtered);
+        }
+
+        function setCategory(cat, el) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            filterData();
+        }
+
+        function showLoader() { document.getElementById('loader').style.display = 'block'; document.getElementById('market-list').innerHTML = ''; }
+        function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+
+        window.onload = init;
+    </script>
+
+    <script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+    <script>
+        // Require authentication to access this page
+        requireAuth();
+    </script>
+</body>
+
+</html>

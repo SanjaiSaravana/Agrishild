@@ -1,0 +1,61 @@
+/* Specific layout for the 3-column trigger grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 992px) {
+    .grid { grid-template-columns: 1fr; }
+}
+
+/* Consecutive Days Box for Heatwave */
+.day-box {
+    background: #FFF3E0;
+    color: #E65100;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: inline-block;
+    border: 1px solid #FFE0B2;
+}
+
+/* Satellite Preview Box */
+.satellite-preview {
+    height: 120px;
+    background: linear-gradient(45deg, #a8e063, #56ab2f);
+    border-radius: 12px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Timeline Styles */
+.timeline {
+    margin-top: 30px;
+    border-left: 2px solid #e0e0e0;
+    padding-left: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -27px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+}

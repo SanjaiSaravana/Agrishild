@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | AgriShield Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/auth.css') }}">
+</head>
+
+<body>
+
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="brand-logo" onclick="location.href='/'">Agri<span>Shield</span></div>
+            <h2>{{ role_title or 'Welcome Back' }}</h2>
+            <p class="subtitle">Enter your credentials to access your dashboard</p>
+            {% if role %}
+            <input type="hidden" id="login_redirect" value="{{ '/bidding' }}">
+            {% endif %}
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="farmer@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <div id="errorMsg" class="error-msg"></div>
+
+                <button type="submit" class="btn-auth">Sign In</button>
+            </form>
+
+            <div class="auth-links">
+                Don't have an account? <a href="/signup">Create one</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const submitButton = e.target.querySelector('button[type="submit"]');
+
+            // Clear previous errors
+            errorMsg.style.display = 'none';
+            errorMsg.textContent = '';
+
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing in...';
+
+            try {
+                // OAuth2 password flow expects form data
+                const formData = new URLSearchParams();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+
+                // Try to parse response as JSON
+                let data;
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    // If not JSON, get text and throw error
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned an invalid response. Please check the server logs.');
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Login failed');
+                }
+
+                // Store token
+                localStorage.setItem('token', data.access_token);
+
+                // Redirect to stored page or home
+                const roleRedirect = document.getElementById('login_redirect');
+                let redirectTo = '/';
+
+                if (roleRedirect) {
+                    redirectTo = roleRedirect.value;
+                } else {
+                    redirectTo = localStorage.getItem('redirectAfterLogin') || '/';
+                }
+
+                localStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectTo;
+
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMsg.textContent = error.message || 'An unexpected error occurred';
+                errorMsg.style.display = 'block';
+
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+
+</html>

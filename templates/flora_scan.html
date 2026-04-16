@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriShield AI | Flora Scan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        :root {
+            --primary: #00ff88;
+            --accent: #00d2ff;
+            --bg: #050807;
+            --surface: #0e1211;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(14, 18, 17, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+        }
+
+        .treatment-step {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #00ff88, #00d2ff);
+            color: #000;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .pulse-border {
+            border: 2px dashed rgba(0, 255, 136, 0.3);
+            transition: 0.3s;
+        }
+
+        .pulse-border:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.02);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">Agri<span
+                        class="highlight">Shield</span> AI</a></div>
+            <div class="nav-center">
+                <a href="/#features" class="nav-link">Features</a>
+                <a href="/market" class="nav-link">Live Market</a>
+            </div>
+            <div class="nav-right">
+                <a href="/" class="nav-link">✕ Close</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pt-32 pb-20">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <div class="pill-badge">AI-POWERED DIAGNOSTICS</div>
+                <h1 class="text-5xl font-extrabold tracking-tight mb-4 animate__animated animate__fadeInDown">
+                    Flora<span class="gradient-text">Scan</span>
+                </h1>
+                <p class="text-gray-400 text-lg animate__animated animate__fadeIn animate__delay-1s">
+                    Detect diseases and nutrient deficiencies in seconds using our neural engine.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Upload Section -->
+                <div class="space-y-6">
+                    <div id="dropZone"
+                        class="glass-card p-8 pulse-border cursor-pointer text-center relative overflow-hidden group shadow-lg h-80 flex flex-col justify-center items-center">
+                        <input type="file" id="imageInput" class="hidden" accept="image/*">
+
+                        <div id="promptText">
+                            <div
+                                class="w-16 h-16 bg-green-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 4v16m8-8H4" stroke-width="2" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-gray-200">Upload Leaf Image</p>
+                            <p class="text-sm text-gray-400">Drag and drop or click to scan</p>
+                        </div>
+
+                        <img id="preview"
+                            class="hidden w-full h-full object-cover rounded-2xl animate__animated animate__zoomIn">
+                    </div>
+
+                    <div id="loading" class="hidden text-center p-6 glass-card animate__animated animate__fadeIn">
+                        <div class="flex items-center justify-center space-x-3 mb-3">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-bounce"></div>
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-bounce [animation-delay:-.3s]"></div>
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-bounce [animation-delay:-.5s]"></div>
+                        </div>
+                        <p class="text-green-400 font-bold uppercase text-xs tracking-widest">Neural Analysis in
+                            Progress</p>
+                        <p class="text-gray-500 text-xs mt-1">Comparing patterns with 38,000+ samples...</p>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultContainer" class="hidden space-y-6 animate__animated animate__fadeInRight">
+                    <div class="glass-card p-8 shadow-xl">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <span id="statusBadge"
+                                    class="mb-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block"></span>
+                                <h2 id="diseaseName"
+                                    class="text-3xl font-extrabold text-white capitalize leading-tight"></h2>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Confidence</p>
+                                <p id="confValue" class="text-2xl font-black text-green-400"></p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="treatment-step">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Recommended
+                                    Pesticide</h4>
+                                <p id="pestInfo" class="text-gray-200 font-semibold text-sm"></p>
+                            </div>
+
+                            <div class="treatment-step" style="border-color: var(--accent);">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Fertilizer
+                                    Boost</h4>
+                                <p id="fertInfo" class="text-gray-200 font-semibold text-sm"></p>
+                            </div>
+
+                            <div class="treatment-step" style="border-color: #f59e0b;">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Directions
+                                    for Use</h4>
+                                <p id="dirInfo" class="text-gray-300 text-sm leading-relaxed"></p>
+                            </div>
+                        </div>
+
+                        <button onclick="location.reload()"
+                            class="w-full mt-8 btn-gradient py-4 rounded-xl font-bold active:scale-95">
+                            New Diagnosis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const dropZone = document.getElementById('dropZone');
+        const preview = document.getElementById('preview');
+        const promptText = document.getElementById('promptText');
+        const resultContainer = document.getElementById('resultContainer');
+        const loading = document.getElementById('loading');
+
+        dropZone.onclick = () => imageInput.click();
+
+        imageInput.onchange = e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    preview.src = event.target.result;
+                    preview.classList.remove('hidden');
+                    promptText.classList.add('hidden');
+                    analyze(file);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        async function analyze(file) {
+            loading.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/api/flora-scan/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Analysis engine failed to respond");
+
+                const data = await response.json();
+
+                loading.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+
+                document.getElementById('diseaseName').innerText = data.disease.replace(/_/g, ' ');
+                document.getElementById('confValue').innerText = Math.round(data.confidence * 100) + '%';
+
+                const badge = document.getElementById('statusBadge');
+                if (data.status === 'healthy') {
+                    badge.innerText = "Healthy Plant";
+                    badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block bg-green-900/30 text-green-400 border border-green-500/30";
+                } else {
+                    badge.innerText = "Disease Detected";
+                    badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block bg-red-900/30 text-red-400 border border-red-500/30";
+                }
+
+                document.getElementById('pestInfo').innerText = data.treatment.pesticide || "No treatment required.";
+                document.getElementById('fertInfo').innerText = data.treatment.fertilizer || "Standard organic maintenance.";
+                document.getElementById('dirInfo').innerText = data.treatment.directions || "Maintain regular monitoring.";
+
+            } catch (err) {
+                loading.classList.add('hidden');
+                console.error("AI Bridge Failure:", err);
+                alert("Connection Error: Could not reach the FloraScan AI server.");
+            }
+        }
+    </script>
+</body>
+
+</html>

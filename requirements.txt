@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+jinja2
+python-dotenv
+httpx
+requests
+email-validator
+passlib[bcrypt]
+python-jose[cryptography]
+sqlalchemy
+python-multipart
+solana
+solders
+base58
+torch
+torchvision
+Pillow

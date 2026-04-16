@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard | AgriShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <style>
+        .dashboard-container {
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        .welcome-section {
+            margin-bottom: 40px;
+        }
+
+        .farmer-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .revenue-highlight {
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            background: rgba(0, 255, 136, 0.02);
+        }
+
+        .form-section {
+            margin-bottom: 50px;
+        }
+
+        .modern-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            padding-left: 5px;
+        }
+
+        .modern-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.02);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .crop-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grade-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grade-A {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .grade-B {
+            border-color: #f1c40f;
+            color: #f1c40f;
+        }
+
+        .grade-C {
+            border-color: #e67e22;
+            color: #e67e22;
+        }
+
+        .bid-info {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .countdown-timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            background: transparent;
+            color: #ff4d4d;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 77, 77, 0.1);
+            border-color: #ff4d4d;
+        }
+
+        .meet-input-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-mini {
+            padding: 10px 15px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/smart-bidding" class="nav-link">Bidding Home</a>
+                <a href="/" class="nav-link">AgriShield Home</a>
+            </div>
+            <div class="nav-right">
+                <span style="color: #888; font-size: 0.85rem; margin-right: 10px;">Farmer:</span>
+                <span style="color: #fff; font-weight: 700; margin-right: 20px;">{{ current_user.username }}</span>
+                <a href="/bidding/logout" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom: 30px;">
+            {% for category, message in messages %}
+            <div class="pill-badge"
+                style="display: block; width: 100%; border-color: {% if category == 'error' %}#ff4d4d{% else %}var(--primary){% endif %}; background: rgba(0,0,0,0.3); padding: 15px; text-align: left; margin-bottom: 10px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="welcome-section">
+            <div class="pill-badge">FARMER PORTAL</div>
+            <h1>Your <span class="gradient-text">Farming Dashboard</span></h1>
+            <p>Manage your listings, monitor live bids, and maximize your profit.</p>
+        </div>
+
+        <section class="farmer-stats">
+            <div class="stat-card">
+                <h3>Live Listings</h3>
+                <div class="value">{{ crops|length }}</div>
+            </div>
+            <div class="stat-card revenue-highlight">
+                <h3>Total Bid Volume</h3>
+                <div class="value">₹{{ "%.2f"|format(revenue) }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Est. Profit (85%)</h3>
+                <div class="value" style="color: var(--accent);">₹{{ "%.2f"|format(revenue * 0.85) }}</div>
+                <p style="font-size: 0.75rem; color: #555; margin-top: 5px;">vs ₹{{ "%.2f"|format(revenue * 0.12) }}
+                    (Traditional 12%)</p>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="card" style="border-color: rgba(0, 255, 136, 0.2); background: rgba(0, 255, 136, 0.01);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                    <div style="font-size: 2rem;">🚜</div>
+                    <div>
+                        <h2 style="font-size: 1.5rem; margin: 0;">Add New Crop <span
+                                class="gradient-text">Listing</span></h2>
+                        <p style="font-size: 0.85rem; color: #888; margin: 0;">List your harvest and let AI grade your
+                            quality.</p>
+                    </div>
+                </div>
+
+                <form action="/bidding/crop/add" method="POST" class="modern-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Crop Name</label>
+                            <input type="text" name="name" class="modern-input"
+                                placeholder="e.g. Premium Sona Masuri Rice" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Quantity</label>
+                            <input type="text" name="quantity" class="modern-input"
+                                placeholder="e.g. 500 Bags (50kg each)" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div class="input-group">
+                            <label>Base Price (₹)</label>
+                            <input type="number" name="price" class="modern-input" placeholder="Min per unit"
+                                step="0.01" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Auction Duration (min)</label>
+                            <input type="number" name="duration" class="modern-input" min="1" value="30" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Brief Description</label>
+                            <input type="text" name="description" class="modern-input"
+                                placeholder="Organic, aged, etc.">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; border-radius: 12px; font-size: 1rem; padding: 18px;">
+                            🚀 List Crop & Generate AI Grade
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title" style="margin-bottom: 30px; font-size: 1.8rem;">Your Live <span
+                    class="gradient-text">Market Listings</span></h2>
+
+            {% if crops %}
+            <div class="listing-grid">
+                {% for crop in crops %}
+                <div class="card crop-item">
+                    <div class="grade-badge grade-{{ crop.ai_grade }}">Grade {{ crop.ai_grade }}</div>
+
+                    <h3 style="font-size: 1.3rem; margin-bottom: 8px;">{{ crop.name }}</h3>
+                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">
+                        <span style="color: var(--primary);">{{ crop.quantity }}</span> •
+                        Base: ₹{{ crop.base_price }}
+                    </p>
+
+                    <div class="bid-info">
+                        <div style="font-size: 0.8rem; color: #888; font-weight: 600; text-transform: uppercase;">
+                            Current Highest Bid</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-top: 5px;">₹{{
+                            "%.2f"|format(crop.highest_bid()) }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        {% if crop.is_active() %}
+                        <div class="countdown-timer" data-end="{{ crop.end_time }}">
+                            <span>⏳</span>
+                            <span class="timer">Calculating...</span>
+                        </div>
+                        {% else %}
+                        <div
+                            style="padding: 10px; background: rgba(255, 77, 77, 0.05); border-radius: 10px; border: 1px solid rgba(255, 77, 77, 0.1);">
+                            <p style="color: #ff4d4d; font-size: 0.85rem; font-weight: 700; margin: 0;">AUCTION ENDED
+                            </p>
+                            {% if crop.get_winner() %}
+                            <p style="color: var(--primary); font-size: 0.9rem; margin-top: 5px;">🏆 Winner: {{
+                                crop.get_winner() }}</p>
+                            {% else %}
+                            <p style="color: #555; font-size: 0.85rem; margin-top: 5px;">No bids placed</p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px;">
+                        <form action="/bidding/meet/update/{{ crop.id }}" method="POST">
+                            <label
+                                style="font-size: 0.75rem; font-weight: 700; color: #666; display: block; margin-bottom: 5px;">VIRTUAL
+                                INSPECTION LINK</label>
+                            <div class="meet-input-wrapper">
+                                <input type="text" name="meet_link" value="{{ crop.meet_link or '' }}"
+                                    class="modern-input btn-mini" style="flex: 1; padding: 8px 12px;"
+                                    placeholder="G-Meet Link">
+                                <button type="submit" class="btn-secondary btn-mini" style="margin: 0;">Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                        <a href="https://meet.google.com/new" target="_blank"
+                            style="color: var(--primary); font-size: 0.8rem; font-weight: 600; text-decoration: none;">Create
+                            New Link</a>
+                        <a href="/bidding/crop/delete/{{ crop.id }}" class="delete-btn"
+                            onclick="return confirm('Archive this listing?')">Archive</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card" style="text-align: center; padding: 60px; border-style: dashed;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🌾</div>
+                <h3>No Listings Yet</h3>
+                <p style="color: #888;">Start by listing your crop using the form above.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <script>
+        function updateTimers() {
+            document.querySelectorAll('.countdown-timer').forEach(function (el) {
+                var endTimeStr = el.getAttribute('data-end').replace(' ', 'T');
+                var end = new Date(endTimeStr).getTime();
+                var now = new Date().getTime();
+                var distance = end - now;
+
+                if (distance < 0) {
+                    el.querySelector('.timer').innerHTML = "COMPLETED";
+                    el.style.color = "#888";
+                } else {
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    el.querySelector('.timer').innerHTML = "Ending in " + minutes + "m " + seconds + "s";
+                }
+            });
+        }
+
+        setInterval(updateTimers, 1000);
+        updateTimers();
+    </script>
+</body>
+
+</html>

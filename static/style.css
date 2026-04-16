@@ -1,0 +1,530 @@
+:root {
+    --primary: #00ff88;
+    --accent: #00d2ff;
+    --bg: #050807;
+    --surface: #0e1211;
+    --text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Styles from Image */
+.hero {
+    text-align: center;
+    padding: 150px 0 100px;
+    background: radial-gradient(circle at top right, rgba(0, 255, 136, 0.05), transparent);
+}
+
+.pill-badge {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 15px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #00ff88, #00d2ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Statistics Bar */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    text-align: center;
+    padding: 50px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item h2 {
+    color: var(--primary);
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.stat-item p {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* 3x3 Grid */
+.grid-3x3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    padding: 40px 0;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+}
+
+.border-blue {
+    border: 1px solid var(--accent);
+}
+
+.chat-highlight {
+    border: 2px solid var(--primary);
+    background: rgba(0, 255, 136, 0.02);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary);
+    color: #000;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Modern Header & Nav */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+    padding: 20px 0;
+    background: rgba(5, 8, 7, 0.8);
+    /* Dark semi-transparent */
+    backdrop-filter: blur(15px);
+    /* Glassmorphism effect */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #fff;
+}
+
+.logo .highlight {
+    color: var(--primary);
+    /* Neon Green */
+}
+
+/* Centered Links */
+.nav-center {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #888;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Glowing 'Join the Revolution' Badge */
+.glow-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.glow-badge::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.2) 0%, transparent 70%);
+    z-index: -1;
+}
+
+/* Sign Up Button in Nav */
+.btn-signup {
+    background: var(--primary);
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn-signup:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -8px var(--primary);
+}
+
+/* Logout Button in Nav */
+.btn-logout {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    color: #fff;
+    border-color: var(--primary);
+    background: rgba(0, 255, 136, 0.1);
+}
+
+/* Hero Badge Style */
+.pill-badge {
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    background: rgba(0, 255, 136, 0.05);
+    color: var(--primary);
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+.card {
+    text-decoration: none;
+    /* Removes underline from <a> tags */
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    border-color: var(--primary);
+    transform: translateY(-8px);
+    background: rgba(0, 255, 136, 0.02);
+}
+
+/* Arrow Footer Styling */
+.card-arrow {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+
+.card:hover .card-arrow span {
+    transform: translateX(5px);
+    /* Arrow moves slightly on hover */
+}
+
+.card-arrow span {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Specific Blue Border for Insurance */
+.border-blue:hover {
+    border-color: var(--accent);
+}
+
+.border-blue .card-arrow {
+    color: var(--accent);
+}
+
+/* App Shell Layout */
+.app-body {
+    background: #050807;
+    margin: 0;
+    overflow: hidden;
+}
+
+.app-shell {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar Styling */
+.modern-sidebar {
+    width: 300px;
+    background: #0e1211;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+}
+
+.brand-container {
+    margin-bottom: 40px;
+}
+
+.back-link {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.brand-text h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #fff;
+}
+
+.brand-tagline {
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* Location Card */
+.location-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+/* Navigation Buttons */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--primary);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Main Interface */
+.main-interface {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #050807;
+}
+
+.chat-header {
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-viewport {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Chat Bubbles */
+.msg-bubble {
+    max-width: 70%;
+    padding: 16px 20px;
+    border-radius: 20px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.bot .msg-bubble {
+    background: #161b1a;
+    color: #eee;
+    border-bottom-left-radius: 4px;
+}
+
+.user .msg-bubble {
+    background: var(--primary);
+    color: #000;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+/* Input Area */
+.input-area {
+    padding: 30px 40px;
+}
+
+.input-wrapper {
+    background: #161b1a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#user-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+}
+
+.send-circle {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* User messages on the right, Bot on the left */
+.msg-wrapper {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.msg-wrapper.bot {
+    justify-content: flex-start;
+}
+
+.msg-wrapper.user {
+    justify-content: flex-end;
+}
+
+.user .msg-bubble {
+    background: var(--primary);
+    /* Neon Green */
+    color: #000;
+    border-bottom-right-radius: 4px;
+}
+
+/* Voice Modal Pop-up */
+.voice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}

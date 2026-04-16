@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmGuard | Blockchain Insurance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <h1 style="color: var(--primary); margin:0;">🌾 FarmGuard</h1>
+        <button class="btn" style="width:auto; background:var(--primary); color:white;" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
+    </nav>
+    <div style="padding: 2rem 5%;">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{{ url_for('static', filename='js/wallet.js') }}"></script>
+</body>
+</html>

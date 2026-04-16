@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriIntel™ | Profit Heatmap</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">AgriIntel<span>™</span></div>
+        <nav>
+            <ul>
+                <li class="active">📊 Market Heatmap</li>
+                <li>🌾 My Crops</li>
+                <li>🚚 Logistics Hub</li>
+                <li>📈 Price Trends</li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>February 2026</h1>
+            <span class="badge">Thai - Masi Cycle</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="calendar-card">
+                <div class="grid-7 header">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="grid-7 body">
+                    {% for i in offset %}
+                        <div class="day-tile empty"></div>
+                    {% endfor %}
+
+                    {% for i in range(1, 29) %}
+                        {% set day = days_dict.get(i) %}
+                        <div class="day-tile {{ 'status-' + day.status if day else 'status-neutral' }}"
+                             onclick="showDetails('{{ i }}', '{{ day.event if day else 'Standard Trading' }}', '{{ day.crops | join(',') if day else '' }}', '{{ day.status if day else 'neutral' }}')">
+                            <span class="day-label">{{ i }}</span>
+                            {% if day and day.status == 'red' %}
+                                <div class="peak-dot"></div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="detail-panel" id="detail-panel">
+                <div id="placeholder">
+                    <p>Select a highlighted date to view demand intelligence</p>
+                </div>
+                <div id="content" class="hidden">
+                    <h2 id="p-date">February 01</h2>
+                    <div id="p-event" class="event-pill">Event</div>
+                    <hr>
+                    <h4>High-Demand Commodities</h4>
+                    <ul id="p-crops"></ul>
+                    <div class="action-box">
+                        <p><strong>Recommendation:</strong> Schedule harvest 48 hours prior to this window for maximum freshness.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showDetails(day, event, crops, status) {
+            document.getElementById('placeholder').classList.add('hidden');
+            const content = document.getElementById('content');
+            content.classList.remove('hidden');
+
+            document.getElementById('p-date').innerText = "February " + day + ", 2026";
+            document.getElementById('p-event').innerText = event;
+            document.getElementById('p-event').className = "event-pill " + status;
+
+            const cropList = document.getElementById('p-crops');
+            cropList.innerHTML = "";
+            if (crops) {
+                crops.split(',').forEach(c => {
+                    let li = document.createElement('li');
+                    li.innerText = "• " + c;
+                    cropList.appendChild(li);
+                });
+            } else {
+                cropList.innerHTML = "<li>No specific peaks today.</li>";
+            }
+        }
+    </script>
+</body>
+</html>

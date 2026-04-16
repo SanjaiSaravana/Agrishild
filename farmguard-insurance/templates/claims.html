@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <h1 style="color: var(--primary); margin-bottom: 30px;">Claims & Payout Ledger</h1>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead style="background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 0.8rem;">
+                <tr>
+                    <th style="padding: 20px;">Date</th>
+                    <th style="padding: 20px;">Trigger Type</th>
+                    <th style="padding: 20px;">Evidence</th>
+                    <th style="padding: 20px;">Amount</th>
+                    <th style="padding: 20px;">Status</th>
+                </tr>
+            </thead>
+            <tbody style="color: #334155;">
+                <tr style="border-top: 1px solid #f1f5f9;">
+                    <td style="padding: 20px;">Feb 09, 2026</td>
+                    <td style="padding: 20px;"><strong>Drought</strong></td>
+                    <td style="padding: 20px;">Rainfall: 88mm</td>
+                    <td style="padding: 20px; color: var(--success); font-weight: bold;">₹10,000</td>
+                    <td style="padding: 20px;">
+                        <span style="background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">PAID ⛓️</span>
+                    </td>
+                </tr>
+                <tr style="border-top: 1px solid #f1f5f9;">
+                    <td style="padding: 20px;">July 15, 2025</td>
+                    <td style="padding: 20px;"><strong>Heatwave</strong></td>
+                    <td style="padding: 20px;">42°C (8 Days)</td>
+                    <td style="padding: 20px; color: var(--success); font-weight: bold;">₹5,000</td>
+                    <td style="padding: 20px;">
+                        <span style="background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">ARCHIVED</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; text-align: center; color: #64748b;">
+        <p>💡 No payouts found for current heatwave or satellite triggers.</p>
+        <p><small>All payouts are processed on the Solana Devnet.</small></p>
+    </div>
+</div>
+{% endblock %}

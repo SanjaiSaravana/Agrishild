@@ -1,0 +1,293 @@
+:root {
+    --primary-color: #00f2ff;
+    /* Neon Cyan */
+    --secondary-color: #ff00ff;
+    /* Neon Magenta */
+    --accent-color: #7000ff;
+    /* Electric Purple */
+    --text-color: #e0e0e0;
+    --bg-color: #0a0a0c;
+    --card-bg: #16161a;
+    --danger-color: #ff3131;
+    --bidder-primary: #00f2ff;
+    --glow-color: rgba(0, 242, 255, 0.4);
+    --magenta-glow: rgba(255, 0, 255, 0.4);
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 40%);
+    min-height: 100vh;
+}
+
+header {
+    background-color: rgba(22, 22, 26, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--glow-color);
+    letter-spacing: 1px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+nav a:hover {
+    color: var(--primary-color);
+    text-shadow: 0 0 8px var(--glow-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    border-color: rgba(0, 242, 255, 0.3);
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+}
+
+.btn:hover {
+    background-color: var(--primary-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--glow-color);
+}
+
+.btn-secondary {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.1);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--magenta-glow);
+}
+
+.btn-danger {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 49, 49, 0.4);
+}
+
+.btn-bidder {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(40, 40, 45, 0.5);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--glow-color);
+    background: rgba(40, 40, 45, 0.8);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.crop-card {
+    border-top: 4px solid var(--primary-color);
+}
+
+.crop-card.grade-A {
+    border-color: #00ff88;
+}
+
+.crop-card.grade-B {
+    border-color: #ffd700;
+}
+
+.crop-card.grade-C {
+    border-color: #ff8800;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: white;
+    background-color: #444;
+    text-transform: uppercase;
+}
+
+.badge-A {
+    background-color: #00ff88;
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.badge-B {
+    background-color: #ffd700;
+    color: #000;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.badge-C {
+    background-color: #ff8800;
+    color: #000;
+    box-shadow: 0 0 10px rgba(255, 136, 0, 0.3);
+}
+
+.price-tag {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    text-shadow: 0 0 10px var(--magenta-glow);
+}
+
+.meet-link {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(0, 242, 255, 0.1);
+    border: 1px dashed var(--primary-color);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.meet-link:hover {
+    background: rgba(0, 242, 255, 0.2);
+    box-shadow: 0 0 15px var(--glow-color);
+}
+
+.dashboard-header h2 {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--glow-color);
+    margin: 0;
+}
+
+.stat-box {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    flex: 1;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-box h3 {
+    margin: 0;
+    color: #999;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-box p {
+    margin: 0.5rem 0 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    text-shadow: 0 0 12px var(--glow-color);
+}
+
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.flash-messages li {
+    background: rgba(25, 118, 210, 0.1);
+    color: #90caf9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    border-left: 4px solid var(--bidder-primary);
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0;
+}

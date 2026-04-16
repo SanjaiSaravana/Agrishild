@@ -1,0 +1,29 @@
+:root {
+    --primary: #2C5F2D; --secondary: #97BC62; --accent: #F96167;
+    --bg: #F0F4F0; --white: #ffffff;
+}
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: #333; margin: 0; }
+.navbar { 
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 5%; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.hero-card {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white; padding: 2rem; border-radius: 20px; margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(44,95,45,0.2);
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.card { 
+    background: var(--white); padding: 1.5rem; border-radius: 16px; 
+    transition: 0.3s; border: 1px solid rgba(0,0,0,0.05); 
+}
+.card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+.progress-container { background: #eee; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; position: relative; }
+.progress-fill { background: var(--secondary); height: 100%; transition: width 1s ease-in-out; }
+.threshold-line { position: absolute; top: 0; width: 2px; height: 100%; background: var(--accent); border-style: dashed; }
+.btn { 
+    padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; 
+    font-weight: 600; transition: 0.3s; width: 100%; margin-top: 10px;
+}
+.btn-sim { background: var(--accent); color: white; }

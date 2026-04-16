@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Bidding - AgriShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <style>
+        .bidding-hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+        .bidding-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bidding-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .cta-buttons a {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/" class="nav-link">Home</a>
+            </div>
+            <div class="nav-right">
+                <a href="/bidding/auth" class="btn-signup">Login / Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="bidding-hero">
+            <h1>Smart Bidding Platform</h1>
+            <p style="font-size: 1.2rem; color: #aaa; margin-bottom: 2rem;">
+                Empowering Farmers, Connecting Buyers<br>
+                Get fair prices with AI-graded crops and real-time bidding.
+            </p>
+        </div>
+
+        <div class="bidding-features">
+            <div class="feature-card">
+                <div class="icon-box">🤖</div>
+                <h3 style="color: var(--primary);">AI Grading</h3>
+                <p style="color: #999;">Automatic quality assessment ensures fair pricing for high-quality produce.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">⚡</div>
+                <h3 style="color: var(--secondary);">Real-Time Bidding</h3>
+                <p style="color: #999;">Transparent bidding process maximizes revenue for farmers.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">🤝</div>
+                <h3 style="color: var(--primary);">Direct Connect</h3>
+                <p style="color: #999;">Video meets and chat options to build trust between farmers and buyers.</p>
+            </div>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="/bidding/auth" class="btn-primary">Join as Farmer</a>
+            <a href="/bidding/auth" class="btn-secondary">Join as Bidder</a>
+        </div>
+    </div>
+</body>
+</html>

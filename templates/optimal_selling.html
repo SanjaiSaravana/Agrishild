@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimal Selling Window | AgriShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <!-- Custom Styles for Calendar matching Agri-Profit-Calendar but adapted -->
+    <style>
+        /* Scoped styles for the calendar to avoid breaking main site */
+        .calendar-container {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .top-bar h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cycle-badge {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .calendar-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .grid-7 {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .grid-7.header {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--light-text);
+            text-align: center;
+        }
+
+        .day-tile {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .day-tile:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .day-tile.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .day-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .peak-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            /* Red for peak */
+            border-radius: 50%;
+            margin-top: 5px;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        .status-red {
+            border: 1px solid #ef4444;
+        }
+
+        .status-yellow {
+            border: 1px solid #eab308;
+        }
+
+        .status-neutral {
+            border: 1px solid transparent;
+        }
+
+        .detail-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .event-pill {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .event-pill.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .event-pill.yellow {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .event-pill.neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        #p-crops li {
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+
+        .action-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/#features" class="nav-link">Features</a>
+            </div>
+            <div class="nav-right">
+                <a href="/login" class="nav-link" style="margin-right: 15px;">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="calendar-container">
+        <div class="top-bar">
+            <h1>Optimal Selling Window</h1>
+            <span class="cycle-badge">February 2026 • Thai - Masi Cycle</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="calendar-card">
+                <div class="grid-7 header">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="grid-7 body">
+                    {% for i in offset %}
+                    <div class="day-tile empty"></div>
+                    {% endfor %}
+
+                    {% for i in range(1, 29) %}
+                    {% set day = days_dict.get(i) %}
+                    <div class="day-tile {{ 'status-' + day.status if day else 'status-neutral' }}"
+                        onclick="showDetails('{{ i }}', '{{ day.event if day else 'Standard Trading' }}', '{{ day.crops | join(',') if day else '' }}', '{{ day.status if day else 'neutral' }}')">
+                        <span class="day-label">{{ i }}</span>
+                        {% if day and day.status == 'red' %}
+                        <div class="peak-dot"></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="detail-panel" id="detail-panel">
+                <div id="placeholder">
+                    <h2>Demand Intelligence</h2>
+                    <p style="color: var(--light-text); margin-top: 1rem;">Select a highlighted date on the calendar to
+                        view market opportunities and crop recommendations.</p>
+                </div>
+                <div id="content" class="hidden">
+                    <h2 id="p-date">February 01</h2>
+                    <div id="p-event" class="event-pill">Event</div>
+                    <hr style="border-color: var(--border); margin: 1rem 0;">
+
+                    <h4>High-Demand Commodities</h4>
+                    <ul id="p-crops"></ul>
+
+                    <div class="action-box">
+                        <p><strong>Recommendation:</strong> Schedule harvest 48 hours prior to this window for maximum
+                            freshness and profit.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showDetails(day, event, crops, status) {
+            document.getElementById('placeholder').classList.add('hidden');
+            const content = document.getElementById('content');
+            content.classList.remove('hidden');
+
+            document.getElementById('p-date').innerText = "February " + day + ", 2026";
+            document.getElementById('p-event').innerText = event;
+            document.getElementById('p-event').className = "event-pill " + status;
+
+            const cropList = document.getElementById('p-crops');
+            cropList.innerHTML = "";
+            if (crops) {
+                crops.split(',').forEach(c => {
+                    let li = document.createElement('li');
+                    li.innerText = "• " + c;
+                    cropList.appendChild(li);
+                });
+            } else {
+                cropList.innerHTML = "<li>No specific peaks today.</li>";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | AgriShield Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/auth.css') }}">
+</head>
+
+<body>
+
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="brand-logo" onclick="location.href='/'">Agri<span>Shield</span></div>
+            <h2>Create Account</h2>
+            <p class="subtitle">Join the revolution in smart farming</p>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="fullName" class="form-input" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="farmer@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="phoneNumber" class="form-input" placeholder="+91 98765 43210" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">I am a:</label>
+                    <select id="role" class="form-input"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; width: 100%; padding: 12px 20px; border-radius: 12px; appearance: none; cursor: pointer;">
+                        <option value="buyer">Buyer (Bidder)</option>
+                        <option value="farmer">Farmer (Seller)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <div id="errorMsg" class="error-msg"></div>
+
+                <button type="submit" class="btn-auth">Sign Up</button>
+            </form>
+
+            <div class="auth-links">
+                Already have an account? <a href="/login">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const submitButton = e.target.querySelector('button[type="submit"]');
+
+            errorMsg.style.display = 'none';
+            errorMsg.textContent = '';
+
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        full_name: fullName,
+                        phone_number: phoneNumber,
+                        role: role,
+                        password: password
+                    })
+                });
+
+                // Try to parse response as JSON
+                let data;
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    // If not JSON, get text and throw error
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned an invalid response. Please check the server logs.');
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Registration failed');
+                }
+
+                // Redirect to login after successful registration
+                alert('Account created successfully! Please sign in.');
+                window.location.href = '/login';
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorMsg.textContent = error.message || 'An unexpected error occurred';
+                errorMsg.style.display = 'block';
+
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+            }
+        });
+    </script>
+</body>
+
+</html>

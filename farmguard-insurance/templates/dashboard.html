@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); padding: 12px 25px; border-radius: 50px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="pulse-green"></span>
+                <small style="font-weight: 600; color: #475569;">ORACLE: ONLINE</small>
+            </div>
+            <div style="width: 1px; height: 15px; background: #cbd5e1;"></div>
+            <small style="color: #64748b;">Helius Devnet: <span id="rpc-status" style="color: #059669; font-weight: bold;">CONNECTED</span></small>
+        </div>
+        <div id="wallet-info" style="display: flex; align-items: center; gap: 10px;">
+            <small style="background: #f1f5f9; padding: 4px 12px; border-radius: 20px; color: #475569;">
+                Wallet: <strong id="wallet-balance">Connecting...</strong>
+            </small>
+        </div>
+    </div>
+
+    <div class="hero-card" style="background: linear-gradient(135deg, #1e3a8a 0%, #2C5F2D 100%); color: white; padding: 40px; border-radius: 30px; margin-bottom: 30px; position: relative; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+        <div style="position: relative; z-index: 2;">
+            <h2 id="location-display" style="font-size: 2.2rem; margin-bottom: 10px;">📍 Detecting Location...</h2>
+            <p style="opacity: 0.8; margin-bottom: 25px;">Policy: #FG-2026-MH-001247 | <span id="contract-status" style="background: rgba(74, 222, 128, 0.2); color: #4ade80; padding: 2px 8px; border-radius: 4px;">ACTIVE</span></p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+                <div>
+                    <span style="display: block; opacity: 0.7; font-size: 0.9rem;">Insured Sum</span>
+                    <span style="font-size: 1.8rem; font-weight: 800;">₹10,000</span>
+                </div>
+                <div>
+                    <span style="display: block; opacity: 0.7; font-size: 0.9rem;">Satellite Area</span>
+                    <span style="font-size: 1.8rem; font-weight: 800;">1.0 Ha</span>
+                </div>
+                <div>
+                    <span style="display: block; opacity: 0.7; font-size: 0.9rem;">Current Temp</span>
+                    <span id="hero-temp" style="font-size: 1.8rem; font-weight: 800;">--°C</span>
+                </div>
+            </div>
+        </div>
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    </div>
+
+    <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;">
+        
+        <div class="card shadow-sm" style="background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #1e293b;">☔ Rainfall Trend</h3>
+                <span id="rain-badge" class="badge-safe">SAFE</span>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <span id="rain-value" style="font-size: 2.5rem; font-weight: 800; color: #1e3a8a;">-- mm</span>
+                <small style="color: #64748b; display: block;">Cumulative (30 Days)</small>
+            </div>
+            <div class="threshold-container" style="margin-top: 20px; background: #f8fafc; padding: 15px; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                    <span>Trigger Threshold</span>
+                    <span style="color: #ef4444; font-weight: bold;">100mm</span>
+                </div>
+                <div class="progress-bar" style="height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                    <div id="rain-progress" style="width: 0%; height: 100%; background: #3b82f6; transition: width 1.5s ease-in-out;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm" style="background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #1e293b;">🛰️ Crop Health</h3>
+                <small style="color: #64748b;">Sentinel-2 L2A</small>
+            </div>
+            <div style="text-align: center; padding: 20px 0;">
+                <div id="ndvi-gauge" style="font-size: 3.5rem; font-weight: 900; color: #059669;">--</div>
+                <p id="ndvi-status" style="font-weight: 600; color: #059669; margin: 0;">Analyzing Vegetation...</p>
+            </div>
+            <div style="background: #f0fdf4; border: 1px dashed #bbf7d0; padding: 15px; border-radius: 12px;">
+                <small style="display: block; color: #166534; font-weight: bold; margin-bottom: 5px;">Helius Verification</small>
+                <p style="font-size: 0.75rem; color: #374151; margin: 0; word-break: break-all;">ID: <span id="poly-id">detecting...</span></p>
+            </div>
+            <button type="button" class="btn-payout" onclick="simulatePayout('crop_failure')" style="width: 100%; margin-top: 20px; padding: 15px; border-radius: 12px; border: none; background: #111827; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                Test Smart Payout
+            </button>
+        </div>
+    </div>
+
+    <div class="card" style="background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; margin-top: 25px;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #1e293b;">📜 Recent Transactions</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="border-bottom: 2px solid #f1f5f9;">
+                    <tr>
+                        <th style="padding: 12px; color: #64748b; font-size: 0.85rem;">DATE</th>
+                        <th style="padding: 12px; color: #64748b; font-size: 0.85rem;">EVENT</th>
+                        <th style="padding: 12px; color: #64748b; font-size: 0.85rem;">STATUS</th>
+                        <th style="padding: 12px; color: #64748b; font-size: 0.85rem;">TX HASH</th>
+                    </tr>
+                </thead>
+                <tbody id="tx-ledger-body">
+                    <tr id="empty-ledger-row">
+                        <td colspan="4" style="padding: 20px; text-align: center; color: #94a3b8;">No transactions found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .pulse-green {
+        width: 10px; height: 10px; background: #22c55e; border-radius: 50%;
+        box-shadow: 0 0 0 rgba(34, 197, 94, 0.4); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .badge-safe { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .btn-payout:hover { background: #374151; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .shadow-sm { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
+</style>
+
+<script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+<script src="{{ url_for('static', filename='js/blockchain.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmGuard | Blockchain Insurance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navbar specific overrides */
+        .navbar {
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100vh;
+            padding-top: 70px;
+            /* navbar height */
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .wallet-sidebar {
+            background: rgba(30, 41, 59, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .wallet-card {
+            background: linear-gradient(135deg, #9945FF, #14F195);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(153, 69, 255, 0.2);
+        }
+
+        .wallet-btn {
+            background: white;
+            color: #9945FF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .wallet-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .policy-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .policy-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .policy-val {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Main Area */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header-box {
+            margin-bottom: 30px;
+        }
+
+        .triggers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .trigger-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trigger-card.active {
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .trigger-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .trigger-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .trigger-value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .trigger-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-safe {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+
+        /* Blockchain Visualizer */
+        .chain-box {
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .chain-status {
+            font-family: monospace;
+            color: #14F195;
+            margin-top: 20px;
+            min-height: 20px;
+        }
+
+        .payout-btn {
+            background: #14F195;
+            color: #020617;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: none;
+            /* Hidden until triggered */
+            margin-top: 20px;
+            box-shadow: 0 0 30px rgba(20, 241, 149, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Nav -->
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="wallet-sidebar">
+            <div class="wallet-card">
+                <div style="font-weight:800; margin-bottom:5px;">SOLANA CHAIN</div>
+                <div id="wallet-status" style="font-size:0.9rem; margin-bottom:15px; opacity:0.8;">Not Connected</div>
+                <button class="wallet-btn" onclick="connectWallet()">Connect Phantom</button>
+            </div>
+
+            <div style="margin-top:20px;">
+                <h4 style="color:#94a3b8; margin-bottom:15px;">MY POLICY</h4>
+
+                <div class="policy-item">
+                    <div class="policy-label">Policy ID</div>
+                    <div class="policy-val" id="pol-id">--</div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-label">Coverage</div>
+                    <div class="policy-val" style="color:#14F195">10 SOL</div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-label">Premium Paid</div>
+                    <div class="policy-val">0.5 SOL</div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-label">Pool Balance</div>
+                    <div class="policy-val" id="pool-balance">--</div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-label">Pool Address</div>
+                    <div class="policy-val" id="pool-address" style="font-size:0.7rem; word-break:break-all;">--</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-box">
+                <div
+                    style="background:rgba(20, 241, 149, 0.1); display:inline-block; padding:5px 15px; border-radius:20px; color:#14F195; font-size:0.8rem; margin-bottom:10px;">
+                    PARAMETRIC MONITORING ACTIVE
+                </div>
+                <h1>AgriShield <span class="gradient-text"
+                        style="background:linear-gradient(to right, #9945FF, #14F195); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Smart
+                        Contract</span></h1>
+                <p style="color:#94a3b8;">Real-time satellite monitoring of parametric triggers. Payouts execute
+                    automatically.</p>
+            </div>
+
+            <!-- Parametric Triggers -->
+            <div class="triggers-grid" id="trigger-container">
+                <!-- Trigger 1: Rain -->
+                <div class="trigger-card">
+                    <div class="trigger-status status-safe">NORMAL</div>
+                    <div class="trigger-icon">🌧️</div>
+                    <div class="trigger-title">Rainfall (Season)</div>
+                    <div class="trigger-value">-- mm</div>
+                    <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Threshold: < 100mm</div>
+                    </div>
+                    <!-- Trigger 2: Temp -->
+                    <div class="trigger-card">
+                        <div class="trigger-status status-safe">NORMAL</div>
+                        <div class="trigger-icon">🌡️</div>
+                        <div class="trigger-title">Avg Temperature</div>
+                        <div class="trigger-value">-- °C</div>
+                        <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Threshold: > 40°C</div>
+                    </div>
+                    <!-- Trigger 3: NDVI -->
+                    <div class="trigger-card">
+                        <div class="trigger-status status-safe">NORMAL</div>
+                        <div class="trigger-icon">🌱</div>
+                        <div class="trigger-title">Crop Health (NDVI)</div>
+                        <div class="trigger-value">-- %</div>
+                        <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Threshold: < 30%</div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Contract Actions -->
+                    <div class="chain-box">
+                        <h3>Smart Contract Status</h3>
+                        <div class="chain-status" id="contract-log">> Waiting for triggers...</div>
+
+                        <button class="payout-btn" id="payout-btn" onclick="executePayout()">
+                            🚨 TRIGGER DETECTED: AUTO-CLAIM PAYOUT
+                        </button>
+                    </div>
+
+                    <button onclick="checkTriggers()"
+                        style="margin-top:20px; background:rgba(255,255,255,0.1); border:none; color:#94a3b8; padding:10px 20px; cursor:pointer; border-radius:8px;">
+                        🔄 Force Refresh Data (Simulation)
+                    </button>
+
+        </main>
+    </div>
+
+    <script>
+        let walletAddress = null;
+
+        // 1. Connect Phantom Wallet
+        async function connectWallet() {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    const resp = await window.solana.connect();
+                    walletAddress = resp.publicKey.toString();
+
+                    // Update UI
+                    document.getElementById('wallet-status').innerText = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+                    document.getElementById('wallet-status').style.color = '#14F195';
+                    document.getElementById('wallet-status').style.opacity = '1';
+
+                    // Fetch Policy
+                    fetchPolicy(walletAddress);
+
+                    log("Wallet Connected: " + walletAddress);
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                alert("Phantom Wallet not found! Please install it.");
+            }
+        }
+
+        // 2. Fetch Policy Details (Backend)
+        async function fetchPolicy(addr) {
+            const res = await fetch('/api/insurance/policy-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet_address: addr })
+            });
+            const data = await res.json();
+            if (data.status === 'active') {
+                document.getElementById('pol-id').innerText = data.policy_id;
+                document.getElementById('pool-balance').innerText = data.pool_balance || '--';
+                document.getElementById('pool-address').innerText = data.pool_address || '--';
+                checkTriggers(); // Start monitoring
+            }
+        }
+
+        // 3. Check Triggers (Backend)
+        async function checkTriggers() {
+            log("> Checking data feeds (Sentinel-2, OpenWeatherMap)...");
+
+            // Simulating Lat/Lon (Chennai)
+            const res = await fetch('/api/insurance/check-triggers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat: 13.08, lon: 80.27 })
+            });
+            const data = await res.json();
+
+            updateDashboard(data.triggers);
+
+            if (data.payout_eligible) {
+                log("> ⚠️ CRITICAL THRESHOLD BREACHED. SMART CONTRACT INTERRUPT.");
+                document.getElementById('payout-btn').style.display = 'inline-block';
+            } else {
+                log("> All systems normal. No payout required.");
+                document.getElementById('payout-btn').style.display = 'none';
+            }
+        }
+
+        function updateDashboard(triggers) {
+            const container = document.getElementById('trigger-container');
+            container.innerHTML = ''; // Clear
+
+            triggers.forEach(t => {
+                const isDanger = t.status.includes('TRIGGERED');
+                const statusClass = isDanger ? 'status-danger' : 'status-safe';
+                const cardClass = isDanger ? 'trigger-card active' : 'trigger-card';
+
+                let icon = '❓';
+                if (t.type.includes('Rain')) icon = '🌧️';
+                if (t.type.includes('Heat')) icon = '🌡️';
+                if (t.type.includes('NDVI')) icon = '🌱';
+
+                const html = `
+                    <div class="${cardClass}">
+                        <div class="trigger-status ${statusClass}">${t.status}</div>
+                        <div class="trigger-icon">${icon}</div>
+                        <div class="trigger-title">${t.type}</div>
+                        <div class="trigger-value">${t.value}</div>
+                        <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Threshold: ${t.threshold}</div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // 4. Execute Payout
+        async function executePayout() {
+            if (!walletAddress) return alert("Connect Wallet first!");
+
+            log("> Initiating Smart Contract Transaction...");
+
+            const res = await fetch('/api/insurance/payout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet_address: walletAddress })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                log(`> ✅ PAYOUT SUCCESSFUL! TX: ${data.tx_signature.substring(0, 20)}...`);
+
+                // Show detailed alert with explorer link
+                const explorerLink = data.explorer_url || `https://explorer.solana.com/tx/${data.tx_signature}?cluster=devnet`;
+                alert(
+                    `🎉 Funds Transferred Successfully!\n\n` +
+                    `Amount: ${data.amount}\n` +
+                    `Policy: ${data.policy_id}\n` +
+                    `TX: ${data.tx_signature.substring(0, 30)}...\n\n` +
+                    `View on Solscan: ${explorerLink}`
+                );
+
+                // Open explorer in new tab
+                window.open(explorerLink, '_blank');
+
+                document.getElementById('payout-btn').style.display = 'none';
+            } else {
+                log(`> ❌ PAYOUT FAILED: ${data.message}`);
+                alert(`Payout Failed: ${data.message}`);
+            }
+        }
+
+        function log(msg) {
+            const el = document.getElementById('contract-log');
+            el.innerText = msg;
+            el.style.color = msg.includes('SUCCESS') ? '#14F195' : (msg.includes('CRITICAL') ? '#ef4444' : '#14F195');
+        }
+
+    </script>
+
+    <script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+    <script>
+        // Require authentication to access this page
+        requireAuth();
+    </script>
+</body>
+
+</html>

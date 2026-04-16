@@ -1,0 +1,16 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+numpy==1.24.3
+matplotlib==3.7.2
+rasterio==1.3.8
+scikit-learn==1.3.0
+joblib==1.3.2
+earthengine-api==0.1.372
+google-auth==2.22.0
+google-auth-oauthlib==1.0.0
+google-cloud-storage==2.10.0
+pandas==2.0.3
+geopandas==0.14.0
+shapely==2.0.1
+python-dotenv==1.0.0
+requests==2.31.0

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision Pro | Sentinel-2 AI Monitor</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <aside class="side-panel">
+            <div class="brand-identity">
+                <span class="icon">🛰️</span>
+                <h1>AgriVision <span>Pro</span></h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="#" class="menu-link active">📡 Live Satellite</a>
+                <a href="#" class="menu-link">🌿 NDVI Analysis</a>
+                <a href="#" class="menu-link">💧 Water Stress</a>
+                <a href="#" class="menu-link">📈 Yield Forecast</a>
+            </nav>
+
+            <div class="ai-confidence">
+                <p>AI Model Accuracy</p>
+                <div class="score-box">95.4%</div>
+                <small>Sentinel-2 L2A Data</small>
+            </div>
+        </aside>
+
+        <main class="main-viewport">
+            <header class="header-nav">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search Coordinates (e.g. 28.61, 77.20)...">
+                </div>
+                <div class="system-status">
+                    <span class="dot"></span> GEE API: Operational
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="map-section glass-card">
+                    <div class="section-header">
+                        <h3>Field Visualization</h3>
+                        <div class="toggle-group">
+                            <button class="tgl-btn active">True Color</button>
+                            <button class="tgl-btn">NDVI Mask</button>
+                        </div>
+                    </div>
+                    <div id="map-container">
+                        <div class="map-fallback">Loading Sentinel-2 Imagery...</div>
+                    </div>
+                </div>
+
+                <div class="insights-section">
+                    <div class="insight-card glass-card">
+                        <small>Vegetation Health (NDVI)</small>
+                        <div class="data-row">
+                            <h2>0.82</h2>
+                            <span class="trend up">▲ 4%</span>
+                        </div>
+                        <div class="progress"><div class="bar" style="width: 82%"></div></div>
+                        <p class="desc healthy">Vibrant Crop Growth</p>
+                    </div>
+
+                    <div class="insight-card glass-card">
+                        <small>Water Stress (NDWI)</small>
+                        <h2>Optimum</h2>
+                        <div class="indicator-dot good"></div>
+                        <p class="desc">No irrigation required today.</p>
+                    </div>
+
+                    <div class="insight-card glass-card yield">
+                        <small>Predicted Yield</small>
+                        <h2>4.8 <span class="unit">t/ha</span></h2>
+                        <p class="desc">93% Prediction Accuracy</p>
+                    </div>
+
+                    <div class="insight-card glass-card alert-card">
+                        <small>Pathogen Radar</small>
+                        <h2 class="no-issue">Clear</h2>
+                        <p class="desc">Scanning for Fungal Stress...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

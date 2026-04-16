@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Alerts | AgriShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <style>
+        .page-container {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .alert-form {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            padding-left: 5px;
+        }
+
+        .modern-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: 0.3s ease;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.02);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .success-pill {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div class="nav-center">
+                <a href="/" class="nav-link">Home</a>
+            </div>
+            <div class="nav-right">
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container page-container">
+        {% if success %}
+        <div class="success-pill">
+            <span style="font-size: 1.2rem;">✨</span>
+            {{ success }}
+        </div>
+        {% endif %}
+
+        <div class="auth-card">
+            <div class="header">
+                <div class="pill-badge">ADVISORY SYSTEM</div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Personalized <span
+                        class="gradient-text">Alerts</span></h1>
+                <p style="color: #888; line-height: 1.5;">Register your crop to receive real-time weather alerts and
+                    precision agricultural advisory directly via SMS.</p>
+            </div>
+
+            <form action="/api/advisory/register" method="POST" class="alert-form">
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" class="modern-input" placeholder="e.g. Ramesh Kumar" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number (with +91)</label>
+                        <input type="tel" name="phone" class="modern-input" placeholder="+91 XXXXXXXXXX" required>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label>City / Location</label>
+                        <input type="text" name="city" class="modern-input" placeholder="e.g. Nashik" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Crop Type</label>
+                        <input type="text" name="crop" class="modern-input" placeholder="e.g. Grapes" required>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="btn-primary"
+                        style="width: 100%; padding: 18px; font-size: 1.1rem; border-radius: 14px;">
+                        Subscribe to Smart Alerts 🚀
+                    </button>
+                </div>
+            </form>
+
+            <div style="margin-top: 30px; text-align: center; font-size: 0.85rem; color: #555;">
+                By subscribing, you agree to receive automated SMS weather alerts. Standard carrier rates may apply.
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+</body>
+
+</html>

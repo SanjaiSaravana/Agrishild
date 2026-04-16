@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriShield AI | Smart Farming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">Agri<span class="highlight">Shield</span> AI</div>
+            <div id="location-display" style="color: var(--primary); font-size: 0.9rem; margin-left: 20px;">Detecting...
+            </div>
+            <div class="nav-center">
+                <a href="#features" class="nav-link">Features</a>
+            </div>
+            <div class="nav-right">
+                <a href="/login" class="nav-link" style="margin-right: 15px;">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <div class="pill-badge">SATELLITE-POWERED AGRICULTURE</div>
+            <h1>Empowering Farmers with <br><span class="gradient-text">Precision Intelligence</span></h1>
+            <p>Detecting disease at 2% growth, eliminating middlemen, and securing the future of global food chains.</p>
+            <div class="hero-btns">
+                <button class="btn-primary" onclick="location.href='/chatbot'">Get Started</button>
+                <button class="btn-secondary">Watch Demo</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="stats-bar container">
+        <div class="stat-item">
+            <h2>2%</h2>
+            <p>Detection Threshold</p>
+        </div>
+        <div class="stat-item">
+            <h2>₹1,200</h2>
+            <p>Saved per Acre</p>
+        </div>
+        <div class="stat-item">
+            <h2>48 Hrs</h2>
+            <p>Claim Settlement</p>
+        </div>
+        <div class="stat-item">
+            <h2>85%</h2>
+            <p>Retail Price to Farmer</p>
+        </div>
+    </section>
+
+
+
+    <section id="features" class="container">
+        <h2 class="section-title">Technological Edge</h2>
+        <div class="grid-3x3">
+            <a href="/chatbot" class="card chat-highlight">
+                <div class="icon-box">🎙️</div>
+                <h4>Native Voice AI</h4>
+                <p>Speak with our AI expert in your local language for instant crop advice.</p>
+                <div class="card-arrow">Open Voice Chat <span>→</span></div>
+            </a>
+
+            <a href="/crop-monitor" class="card">
+                <div class="icon-box">🛰️</div>
+                <h4>Early Detection</h4>
+                <p>Satellite monitoring detects disease at the 2% growth stage.</p>
+                <div class="card-arrow">Learn More <span>→</span></div>
+            </a>
+
+            <a href="/alerts" class="card">
+                <div class="icon-box">☁️</div>
+                <h4>Smart Alerts</h4>
+                <p>Hyper-local AI weather prediction saves ₹1,200/acre.</p>
+                <div class="card-arrow">View Alerts <span>→</span></div>
+            </a>
+
+            <a href="/insurance" class="card border-blue">
+                <div class="icon-box">🔗</div>
+                <h4>Blockchain Insurance</h4>
+                <p>Automatic claim settlement within 48 hours. No paperwork.</p>
+                <div class="card-arrow">Get Insured <span>→</span></div>
+            </a>
+
+            <a href="/market" class="card market-highlight">
+                <div class="live-tag"><span class="pulse"></span> LIVE AGMARKNET</div>
+                <div class="icon-box">🚜</div>
+                <h4>Direct Market</h4>
+                <p>Access real-time Mandi rates for your specific district.</p>
+                <div class="card-arrow">Explore Market <span>→</span></div>
+            </a>
+
+            <a href="/flora-scan" class="card">
+                <div class="icon-box">🍀</div>
+                <h4>Flora Scan</h4>
+                <p>Detect diseases and nutrient deficiencies in your crops.</p>
+                <div class="card-arrow">Explore <span>→</span></div>
+            </a>
+
+            <a href="/optimal-selling" class="card">
+                <div class="icon-box">📅</div>
+                <h4>Optimal Selling Window</h4>
+                <p>Plan your harvest and sales based on market peaks and festivals.</p>
+                <div class="card-arrow">Check Dates <span>→</span></div>
+            </a>
+            <a href="/smart-bidding" class="card">
+                <div class="icon-box">📅</div>
+                <h4>Smart Bidding</h4>
+                <p>Plan your harvest and sales based on market peaks and festivals.</p>
+                <div class="card-arrow">Explore<span>→</span></div>
+            </a>
+            <a href="/personalized-alerts" class="card">
+                <div class="icon-box">📅</div>
+                <h4>Personalized Alerts</h4>
+                <p>Get personalized alerts based on your crop and location.</p>
+                <div class="card-arrow">Get Alerts <span>→</span></div>
+            </a>
+
+    </section>
+
+    <a href="/chatbot" class="floating-bot">🤖</a>
+
+    <script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+</body>
+
+</html>
